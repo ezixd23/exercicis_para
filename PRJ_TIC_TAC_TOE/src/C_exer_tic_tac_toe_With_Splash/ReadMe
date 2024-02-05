@@ -1,0 +1,25 @@
+For this part, start by copying the B_TicTacToe.java file
+of the previous part of the exercise. Then make the appropriate 
+modifications.
+
+
+class Splash extends Thread {
+	
+	private volatile boolean stop;
+	private Shared shared;
+	
+	public Splash (Shared sh) {
+		this.shared = sh;
+	}
+	
+	public  void run () {
+		while (!stop) {
+			try {Thread.sleep(500);} catch(InterruptedException ie) {}
+			shared.letMeSplash();
+			System.out.println("\n\tSPLASH!");
+			shared.splashDone();
+		}
+	}
+	
+	public void stopNow () {stop=true;}
+}
