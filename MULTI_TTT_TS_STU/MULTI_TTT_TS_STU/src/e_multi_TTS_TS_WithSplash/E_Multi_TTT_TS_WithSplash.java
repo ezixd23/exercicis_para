@@ -52,7 +52,6 @@ class TsBasedSynchronizer  {
         }
     }
     public void letMeTac(int id) {
-        if (id % 2 == 0) state.set(SPLASH_POSSIBLE);
         while (!state.compareAndSet(TAC_POSSIBLE,WRITING_IN_COURSE)){
             Thread.yield();
         }
@@ -69,8 +68,9 @@ class TsBasedSynchronizer  {
         }
     }
 
-    public void ticDone() {
-        state.set(TAC_POSSIBLE);
+    public void ticDone(int id) {
+        if (id % 2 == 0) state.set(SPLASH_POSSIBLE);
+        else state.set(TAC_POSSIBLE);
     }
 
     public void tacDone() {
@@ -103,7 +103,7 @@ class Tic extends Thread {
             /* COMPLETE */
             syncTool.letMeTic();
             System.out.print("TIC("+id+")-");
-            syncTool.ticDone();
+            syncTool.ticDone(id);
         }
     }
 }
