@@ -34,9 +34,9 @@ public class A {
 // encapsulation of the elements the threads need to share
 class SharedBundle {
 	public volatile boolean uppercase = true;
-	public Semaphore canTic = new Semaphore(/* permits */);
-	public Semaphore canTac = new Semaphore(/* permits */);
-	public Semaphore canToe = new Semaphore(/* permits */);
+	public Semaphore canTic = new Semaphore(2/* permits */);
+	public Semaphore canTac = new Semaphore(2/* permits */);
+	public Semaphore canToe = new Semaphore(2/* permits */);
 }
 
 class TIC extends Thread {
@@ -52,6 +52,9 @@ class TIC extends Thread {
 	public void run () {
 		while (true) {
 			/* COMPLETE */
+			shared.canTic.acquireUninterruptibly();
+            System.out.print("Tic-");
+            shared.canTac.release();
 		}
 	}
 }
@@ -60,6 +63,7 @@ class TAC extends Thread {
 	
 	private int id;
 	private SharedBundle shared;
+	private boolean upper;
 	
 	public TAC (int id, SharedBundle shared) {
 		this.id = id;
@@ -69,6 +73,12 @@ class TAC extends Thread {
 	public void run (){
 		while (true) {
 			/* COMPLETE */
+			shared.canTac.acquireUninterruptibly();
+            if(upper) System.out.print("TAC-");
+            else System.out.print("tac-");
+            upper = !upper;
+            shared.canToe.release();
+            
 		}
 	}
 }
@@ -86,6 +96,9 @@ class TOE extends Thread {
 	public void run () {
 		while (true) {
 			/* COMPLETE */
+			shared.canToe.acquireUninterruptibly();
+            System.out.println("TOE");
+            shared.canTic.release();
 		}
 	}
 }
