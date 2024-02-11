@@ -38,23 +38,45 @@ public class PingPong_C {
 
 class Synchronizer {
 	
-	private Semaphore binSem;  
+	private Semaphore binSem = new Semaphore(1);  
 	/* COMPLETE */
-	
+	private int turn = 0;
 	public void letMePing () {
 		/* COMPLETE */
+	     while (true) {
+	            binSem.acquireUninterruptibly();
+	            if (turn == 0) {
+	                break;
+	            } else {
+	                binSem.release();
+	            }
+	        }
 	}
 	
 	public void pingDone() {
 		/* COMPLETE */
+		turn = 1;
+		binSem.release();
+		
 	}
 	
 	public void letMePong() {
 		/* COMPLETE */
+	     while (true) {
+	            binSem.acquireUninterruptibly();
+	            if (turn == 1) {
+	                break;
+	            } else {
+	                binSem.release();
+	            }
+	        }
 	}
 	
 	public void pongDone() {
 		/* COMPLETE */
+		turn = 0;
+		binSem.release();
+		
 	}
 	
 }
