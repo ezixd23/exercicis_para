@@ -43,18 +43,22 @@ class Synchronizer {
 	
 	public void letMePing () {
 		/* COMPLETE */
+		canPing.acquireUninterruptibly();
 	}
 	
 	public void pingDone() {
 		/* COMPLETE */
+		canPong.release();
 	}
 	
 	public void letMePong() {
 		/* COMPLETE */
+		canPing.acquireUninterruptibly();
 	}
 	
 	public void pongDone() {
 		/* COMPLETE */
+		canPing.release();
 	}
 	
 }
