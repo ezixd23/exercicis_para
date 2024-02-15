@@ -34,9 +34,9 @@ public class A {
 // encapsulation of the elements the threads need to share
 class SharedBundle {
 	public volatile boolean uppercase = true;
-	public Semaphore canTic = new Semaphore(2/* permits */);
-	public Semaphore canTac = new Semaphore(2/* permits */);
-	public Semaphore canToe = new Semaphore(2/* permits */);
+	public Semaphore canTic = new Semaphore(1/* permits */);
+	public Semaphore canTac = new Semaphore(0/* permits */);
+	public Semaphore canToe = new Semaphore(0/* permits */);
 }
 
 class TIC extends Thread {

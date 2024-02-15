@@ -41,10 +41,10 @@ class Synchronizer {
 	private volatile int lastTicId = -1;
 	private volatile boolean frogReady = false;
 	
-	private Semaphore canTic = new Semaphore(/* permits */);
-	private Semaphore canTac = new Semaphore(/* permits */);
-	private Semaphore canToe = new Semaphore(/* permits */);
-	private Semaphore canLeap = new Semaphore(/* permits */);
+	private Semaphore canTic = new Semaphore(0/* permits */);
+	private Semaphore canTac = new Semaphore(0/* permits */);
+	private Semaphore canToe = new Semaphore(0/* permits */);
+	private Semaphore canLeap = new Semaphore(0/* permits */);
 	
 	
 	public void letMeTic (int id) {

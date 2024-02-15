@@ -35,9 +35,9 @@ public class B {
 class SharedBundle {
 	public volatile boolean uppercase = true;
 	public volatile int lastTicId = -1;
-	public Semaphore canTic = new Semaphore(/* permits */);
-	public Semaphore canTac = new Semaphore(/* permits */);
-	public Semaphore canToe = new Semaphore(/* permits */);
+	public Semaphore canTic = new Semaphore(1/* permits */);
+	public Semaphore canTac = new Semaphore(0/* permits */);
+	public Semaphore canToe = new Semaphore(0/* permits */);
 }
 
 class TIC extends Thread {
@@ -54,9 +54,13 @@ class TIC extends Thread {
 		while (true) {
 			
 			/* COMPLETE */
-			//System.out.print("TIC("+id+")-");
-			
+			shared.canTic.acquireUninterruptibly();
+			if(shared.lastTicId != id)break;
+			shared.canTic.release();
 		}
+		System.out.print("TIC("+id+")-");
+		shared.canTac.release();
+		shared.lastTicId = id;
 	}
 }
 
@@ -74,8 +78,11 @@ class TAC extends Thread {
 		
 		while (true) {
 			/* COMPLETE */
-			// System.out.print("TAC("+id+")");
-			// System.out.print("tac["+id+"]");
+			shared.canTac.acquireUninterruptibly();
+			if(shared.uppercase) System.out.print("TAC("+id+")");
+			else System.out.print("tac["+id+"]");
+			shared.uppercase = !shared.uppercase;
+			shared.canToe.release();
 		}
 	}
 }
@@ -92,9 +99,14 @@ class TOE extends Thread {
 	
 	public void run () {
 		while (true) {
-			// System.out.println("-TOE("+id+")");
+			shared.canToe.acquireUninterruptibly();
+			if(shared.lastTicId==id) break;
 			/* COMPLETE */
+			shared.canToe.release();
 		}
+		System.out.println("-TOE("+id+")");
+		shared.canTic.release();
+
 	}
 }
 
