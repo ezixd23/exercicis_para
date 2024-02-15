@@ -26,16 +26,24 @@ class Storage {
     private volatile int value = -1000;
     
     /* COMPLETE */
+    private Semaphore mutex = new Semaphore(1);
     
     public int getValue() {
         // block invoker if no value is available
     	/* COMPLETE */
+    	int res;
+    	mutex.acquireUninterruptibly();
+    	res = value;
+    	mutex.release();
+    	return res;
     }
     
     public void setValue(int value) {
         // block invoker if value cannot be set yet
     	/* COMPLETE */
-    	
+    	mutex.acquireUninterruptibly();
+    	this.value = value;
+    	mutex.release();
     }
 }
 
