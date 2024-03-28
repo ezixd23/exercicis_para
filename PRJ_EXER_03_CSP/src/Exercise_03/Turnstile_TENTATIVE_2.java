@@ -9,6 +9,8 @@ public class Turnstile_TENTATIVE_2 extends Thread {
 
     /* COMPLETE */
     // want[0] is want_p; want[1] is want_q;
+	private static volatile boolean[] want = {false, false};
+	private static volatile int turn = 0;
     
     private static int nextPrNumber = 0;
     
@@ -36,12 +38,20 @@ public class Turnstile_TENTATIVE_2 extends Thread {
             this.myCounter++;
             
             /* COMPLETE: WRITE preprotocol */
-           
+            want[this.procNumber] = true;
+            while (want[this.other]) {
+                if (turn != this.procNumber) {
+                    want[this.procNumber] = false;
+                    while (turn != this.procNumber) { /* busy wait */ }
+                    want[this.procNumber] = true;
+                }
+            }
             /* Critical Section */
             this.globalCounter.increment();
             
             /* COMPLETE: WRITE postprotocol */
-            
+            turn = this.other;
+            want[this.procNumber] = false;
           
             /* Non-Critical Section */
             System.out.println(this.getName() + ": " + myCounter);
@@ -50,8 +60,9 @@ public class Turnstile_TENTATIVE_2 extends Thread {
 
      public static void reset() {
         // this procedure resets the static components of the class
-        want[0].set(false);
-        want[1].set(false);
+		  
+        want[0]=false;
+        want[1]=false;
         nextPrNumber = 0;
     }
 

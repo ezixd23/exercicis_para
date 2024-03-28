@@ -41,20 +41,46 @@ class ThreeSistersMonitor {
 		System.out.println("ADA takes a cookie");
 		AdaBarb ++;
 		AdaCord ++;
-		
+		if(AdaBarb>=2) {
+			barbCanTakes.signal();
+		}
+		if(AdaCord>=3 && BarbCord>=1) {
+			cordCanTakes.signal();
+		}
 		lock.unlock();
 	}
 	
 	public void barbTakes() {
 		/* COMPLETE */
+		lock.lock();
+		while(!(AdaBarb>=2)) {
+			barbCanTakes.awaitUninterruptibly();
+		}
+		BarbCord++;
+		AdaBarb=0;
+		if(AdaCord>=3 && BarbCord>=1) {
+			cordCanTakes.signal();
+		}
 		System.out.println("\tBARB takes a cookie");
 		/* COMPLETE */
+		lock.unlock();
 	}
 	
 	public void cordTakes() {
 		/* COMPLETE */
+		lock.lock();
+		while(!(AdaCord>=3 && BarbCord>=1)) {
+			cordCanTakes.awaitUninterruptibly();
+			Thread.yield();
+			
+		}
+		AdaCord=0;
+		BarbCord=0;
+		
 		System.out.println("\t\tCORD takes a cookie");
 		/* COMPLETE */
+		
+		lock.unlock();
 	}
 }
 
