@@ -51,16 +51,17 @@ class CarPark {
     public int getOccupied () {return occupied.getCounter();} // ignore this too
     
     /* COMPLETE declare and create semaphore(s) here */
+    private Semaphore mutex = new Semaphore(PARKING_SPACES);
     
     public void enter () {
     	/* COMPLETE */
-        
+        mutex.acquireUninterruptibly();
         occupied.inc(); // do not add code after this line  
     }
     
     public void exit () {
     	occupied.dec(); // do not add code before this line
-    	
+    	mutex.release();
     }
 }
 
