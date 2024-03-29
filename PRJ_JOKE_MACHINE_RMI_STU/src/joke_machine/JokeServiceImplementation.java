@@ -57,21 +57,40 @@ public class JokeServiceImplementation
 	@Override
 	public int hello() throws RemoteException {
 		/* COMPLETE */
+		int id = nextId;
+		nextId++;
+		clients.put(id, new ClientState());
+		return id;
 	}
 
 	@Override
 	public int joke(int id) throws RemoteException {
 		/* COMPLETE */
+		ClientState state = clients.get(id);
+		if(state==null) throw new RemoteException("joke invoked with an invalid id");
+		state.currentJoke = theJokes.get(alea.nextInt(theJokes.size()));
+		state.nextLine = 0;
+		return state.currentJoke.length;
 	}
 
 	@Override
 	public String nextLine(int id) throws RemoteException {
 		/* COMPLETE */
+		ClientState state = clients.get(id);
+		if(state==null)
+			throw new RemoteException("nextLine invoked with an invalid id");
+		if(state.nextLine==state.currentJoke.length)
+			throw new RemoteException("nextLine invoked with an invalid id");
+		return state.currentJoke[state.nextLine++];
 	}
 
 	@Override
 	public void stop(int id) throws RemoteException {
 		/* COMPLETE */
+		ClientState state = clients.get(id);
+		if(state==null)
+			throw new RemoteException("nextLine invoked with an invalid id");
+		clients.remove(id);
 	}
 	
 }

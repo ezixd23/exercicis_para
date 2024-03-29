@@ -116,19 +116,49 @@ public class Client extends JFrame {
 	protected void btnConnect_actionPerformed(ActionEvent arg0) {
 		/* COMPLETE */
 		// actions to perform when the user clicks on the connect button...
-		
+		try {
+			Registry registry = LocateRegistry.getRegistry("localhost",1999);
+			js = (JokeService)registry.lookup("JokeService");
+			
+			id = js.hello();
+			
+			this.jokeArea.append("connected to server.\n");
+			
+			this.jokeArea.append("Server response: "+id);
+			this.btnConnect.setEnabled(false);
+			this.btnNewJoke.setEnabled(true);
+			this.btnStop.setEnabled(true);
+			this.btnExit.setEnabled(false);
+		}catch(Exception ex) {
+			this.jokeArea.append("Server unavailable or unresponsive");
+		}
 	}
 	
 	protected void btnNewJoke_actionPerformed(ActionEvent arg0) {
 		/* COMPLETE */
 		// actions to perform when the user clicks on the new joke button
-		
+		try {
+			numLines = js.joke(id);
+			this.jokeArea.setText("");
+			for(int i=1;i<=numLines;i++) {
+				this.jokeArea.append("\n"+js.nextLine(id));
+			}
+		}catch(IOException ioex) {}
 	}
 	
 	protected void btnStop_actionPerformed(ActionEvent arg0) {
 		/* COMPLETE */
 		// actions to perform when the user clicks on the disconnect and exit button
-		
+		try {
+			this.jokeArea.setText("");
+			this.jokeArea.append("Sending a STOP reuqetst...");
+			js.stop(id);
+			this.jokeArea.append("\n...DISCONNECTED");
+			this.btnConnect.setEnabled(true);
+			this.btnNewJoke.setEnabled(false);
+			this.btnStop.setEnabled(false);
+			this.btnExit.setEnabled(true);
+		}catch(IOException ioex) {}
 	}
 	
 	protected void btnExit_actionPerformed(ActionEvent arg0) {
