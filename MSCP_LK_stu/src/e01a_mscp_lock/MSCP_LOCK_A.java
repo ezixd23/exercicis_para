@@ -47,22 +47,19 @@ class SyncStorage {
     	while(state!=CAN_SET) {
     		Thread.yield();
     	}
-    	lock.lock();
     	this.value=value;
     	state=CAN_GET;
-    	lock.unlock();
     }
     public int getValue() {/* COMPLETE */
-    	while(state!=CAN_GET) {
-    		Thread.yield();
-    	}
     	lock.lock();
-    	int value = this.value;
-    	lock.unlock();
+    	while(state!=CAN_GET) {
+    		lock.unlock();
+    		Thread.yield();
+    		lock.lock();
+    	}
     	return value;
     }
     public void valuePrinted() {/* COMPLETE */
-    	lock.lock();
     	state=CAN_SET;
     	lock.unlock();
     }
