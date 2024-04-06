@@ -43,9 +43,29 @@ class SyncStorage {
 	
 	// storage related stuff. VALUE and methods
     private volatile int value = -1000;
-    public void setValue(int value) {/* COMPLETE */}
-    public int getValue() {/* COMPLETE */}
-    public void valuePrinted() {/* COMPLETE */}
+    public void setValue(int value) {/* COMPLETE */
+    	while(state!=CAN_SET) {
+    		Thread.yield();
+    	}
+    	lock.lock();
+    	this.value=value;
+    	state=CAN_GET;
+    	lock.unlock();
+    }
+    public int getValue() {/* COMPLETE */
+    	while(state!=CAN_GET) {
+    		Thread.yield();
+    	}
+    	lock.lock();
+    	int value = this.value;
+    	lock.unlock();
+    	return value;
+    }
+    public void valuePrinted() {/* COMPLETE */
+    	lock.lock();
+    	state=CAN_SET;
+    	lock.unlock();
+    }
 }
 
 // Classes Counter and Printer are OK. Do not change them
