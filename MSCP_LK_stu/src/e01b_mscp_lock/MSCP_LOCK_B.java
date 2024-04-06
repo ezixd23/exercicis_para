@@ -37,7 +37,37 @@ public class MSCP_LOCK_B {
 class SyncStorage {
 	
 	/* Copy from previous part and add/modify whatever necessary */
-    
+	// sync related stuff. CONSTANTS
+		private static final int CAN_SET = 1;
+		private static final int CAN_GET = 2;
+		// sync related stuff. STATE
+		private volatile int state = CAN_SET;
+		// sync related stuff. LOCK
+		private  Lock lock = new ReentrantLock();
+		private int last_id=-1;
+		// storage related stuff. VALUE and methods
+	    private volatile int value = -1000;
+	    public void setValue(int value) {/* COMPLETE */
+	    	while(state!=CAN_SET) {
+	    		Thread.yield();
+	    	}
+	    	this.value=value;
+	    	state=CAN_GET;
+	    }
+	    public int getValue(int id) {/* COMPLETE */
+	    	lock.lock();
+	    	while(state!=CAN_GET || last_id==id) {
+	    		lock.unlock();
+	    		Thread.yield();
+	    		lock.lock();
+	    	}
+	    	last_id=id;
+	    	return value;
+	    }
+	    public void valuePrinted() {/* COMPLETE */
+	    	state=CAN_SET;
+	    	lock.unlock();
+	    }
 }
 
 class Counter extends Thread {
