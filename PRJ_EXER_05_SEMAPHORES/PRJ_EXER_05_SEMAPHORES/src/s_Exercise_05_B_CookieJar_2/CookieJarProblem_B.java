@@ -94,19 +94,19 @@ class CookieJar {
    
     public void adaTakes() {
     	/* COMPLETE */
-    	while(true) {
+    	
     		mutex.acquireUninterruptibly();
     		taken ++;
     		ab++;
     		ac++;
     		mutex.release();
-    	}
+    	
     }
     
     public void barbTakes () {
     	/* COMPLETE */
-    	while(true) {
-    		while(ab<1) {
+    	
+    		while(ab<2) {
     			Thread.yield();
     		}
     		mutex.acquireUninterruptibly();
@@ -114,13 +114,13 @@ class CookieJar {
     		ab=0;
     		bc++;
     		mutex.release();
-    	}
+    	
     }
     
     public void cordTakes () {
     	/* COMPLETE */
-    	while(true) {
-    		while(ac<2&&bc<0) {
+    
+    		while(ac<3&&bc<1) {
     			Thread.yield();
     		}
     		mutex.acquireUninterruptibly();
@@ -128,7 +128,7 @@ class CookieJar {
     		ac=0;
     		bc=0;
     		mutex.release();
-    	}
+    	
     }
 
     
