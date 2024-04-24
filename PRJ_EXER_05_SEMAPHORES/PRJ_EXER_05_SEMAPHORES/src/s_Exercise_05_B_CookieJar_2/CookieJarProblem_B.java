@@ -1,5 +1,6 @@
 package s_Exercise_05_B_CookieJar_2;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.*;
 
 public class CookieJarProblem_B {
@@ -86,17 +87,48 @@ class CookieJar {
     private volatile int taken = 0;
    
     /* COMPLETE */
-    
+    private Semaphore mutex = new Semaphore(1);
+    private volatile int ab = 0;
+    private volatile int ac = 0;
+    private volatile int bc = 0;
+   
     public void adaTakes() {
     	/* COMPLETE */
+    	while(true) {
+    		mutex.acquireUninterruptibly();
+    		taken ++;
+    		ab++;
+    		ac++;
+    		mutex.release();
+    	}
     }
     
     public void barbTakes () {
     	/* COMPLETE */
+    	while(true) {
+    		while(ab<1) {
+    			Thread.yield();
+    		}
+    		mutex.acquireUninterruptibly();
+    		taken++;
+    		ab=0;
+    		bc++;
+    		mutex.release();
+    	}
     }
     
     public void cordTakes () {
     	/* COMPLETE */
+    	while(true) {
+    		while(ac<2&&bc<0) {
+    			Thread.yield();
+    		}
+    		mutex.acquireUninterruptibly();
+    		taken++;
+    		ac=0;
+    		bc=0;
+    		mutex.release();
+    	}
     }
 
     
